@@ -20,3 +20,18 @@ Eventually, the intention is to create scripts to import these price dumps to
 GnuCash, and create scripts to compare historial GnuCash portfolio states to
 these Nordea portfolio dumps to ensure that GnuCash stock ownership history is
 correct.
+
+## How to start GnuCash in a manner that automatically uses the database
+
+Create a file `~/.local/bin/gnucash` with contents:
+```
+#!/bin/sh
+export FQ_LOAD_QUOTELET=NordeaGnuCash
+export PERL5LIB=$HOME/nordeagnucash
+echo "Set custom Finance::Quote module list"
+/usr/bin/gnucash
+```
+
+Then add execution permissions to that file.
+
+Now you should be able to automatically get quotes into GnuCash.
