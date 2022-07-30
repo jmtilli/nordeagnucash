@@ -12,7 +12,8 @@ if not re.match(yyyymmdd_pat, yyyymmdd):
     assert False
 fnsrc=os.environ["HOME"]+"/nordeagnucash/nordeaexport/" + yyyymmdd + ".csv"
 fndb=os.environ["HOME"]+"/nordeagnucash/database.txt"
-fntgt=os.environ["HOME"]+"/nordeagnucash/processed/" + yyyymmdd + ".txt"
+fntgt=os.environ["HOME"]+"/nordeagnucash/prices/" + yyyymmdd + ".txt"
+fnprt=os.environ["HOME"]+"/nordeagnucash/portfolios/" + yyyymmdd + ".txt"
 nda2gnu = {}
 with open(fndb, "r") as f:
     for row in f.readlines():
@@ -20,6 +21,7 @@ with open(fndb, "r") as f:
         assert (code,mktcode,curcode) not in nda2gnu
         nda2gnu[(code,mktcode,curcode)] = (gnuex,gnuticker)
 prices = {}
+holdings = {}
 with open(fnsrc, "r") as f:
     csv_reader = csv.reader(f, delimiter=';')
     rows = []
@@ -47,6 +49,7 @@ with open(fnsrc, "r") as f:
             market=row[8]
             currency=row[9]
             name=row[10]
+            cnt=int(row[11])
             price=Decimal(row[12].replace(',', '.'))
             if market == 'XHEL':
                 assert currency == 'EUR'
@@ -85,8 +88,14 @@ with open(fnsrc, "r") as f:
             assert currency in ["CAD", "CHF", "DKK", "EUR", "GBP", "NOK", "SEK", "USD"]
             gnuex,gnuticker = nda2gnu[(security,market,currency)]
             prices[(gnuex,gnuticker)] = (str(price),currency)
+            holdings[(gnuex,gnuticker)] = cnt
 with open(fntgt, "w") as f:
-    for key in prices:
+    for key in sorted(prices.keys()):
         gnuex, gnuticker = key
         price, currency = prices[key]
         f.write("%s %s %s %s\n" % (gnuex, gnuticker, price, currency))
+with open(fnprt, "w") as f:
+    for key in sorted(holdings.keys()):
+        gnuex, gnuticker = key
+        cnt = holdings[key]
+        f.write("%s %s %d\n" % (gnuex, gnuticker, cnt))
