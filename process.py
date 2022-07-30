@@ -14,6 +14,7 @@ fnsrc=os.environ["HOME"]+"/nordeagnucash/nordeaexport/" + yyyymmdd + ".csv"
 fndb=os.environ["HOME"]+"/nordeagnucash/database.txt"
 fntgt=os.environ["HOME"]+"/nordeagnucash/prices/" + yyyymmdd + ".txt"
 fnprt=os.environ["HOME"]+"/nordeagnucash/portfolios/" + yyyymmdd + ".txt"
+fncur=os.environ["HOME"]+"/nordeagnucash/currencies/" + yyyymmdd + ".txt"
 nda2gnu = {}
 with open(fndb, "r") as f:
     for row in f.readlines():
@@ -22,6 +23,7 @@ with open(fndb, "r") as f:
         nda2gnu[(code,mktcode,curcode)] = (gnuex,gnuticker)
 prices = {}
 holdings = {}
+currencyrates = {}
 with open(fnsrc, "r") as f:
     csv_reader = csv.reader(f, delimiter=';')
     rows = []
@@ -51,6 +53,7 @@ with open(fnsrc, "r") as f:
             name=row[10]
             cnt=int(row[11])
             price=Decimal(row[12].replace(',', '.'))
+            currencyrate=Decimal(row[17].replace(',', '.'))
             if market == 'XHEL':
                 assert currency == 'EUR'
             elif market == 'XNYS':
@@ -85,7 +88,12 @@ with open(fnsrc, "r") as f:
             if currency == 'GBX':
                 currency = 'GBP'
                 price = price / 100
+                currencyrate = currencyrate * 100
             assert currency in ["CAD", "CHF", "DKK", "EUR", "GBP", "NOK", "SEK", "USD"]
+            if currency != "EUR":
+                if currency not in currencyrates:
+                    currencyrates[currency] = currencyrate
+                assert currencyrates[currency] == currencyrate
             gnuex,gnuticker = nda2gnu[(security,market,currency)]
             prices[(gnuex,gnuticker)] = (str(price),currency)
             holdings[(gnuex,gnuticker)] = cnt
@@ -99,3 +107,7 @@ with open(fnprt, "w") as f:
         gnuex, gnuticker = key
         cnt = holdings[key]
         f.write("%s %s %d\n" % (gnuex, gnuticker, cnt))
+with open(fncur, "w") as f:
+    for currency in sorted(currencyrates.keys()):
+        rate = currencyrates[currency]
+        f.write("%s %s\n" % (currency, rate))
