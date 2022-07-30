@@ -8,8 +8,8 @@ clicking `Export To Excel`.
 You need to use Excel to convert that file to CSV. If you store it to
 `~/vboxshared/nordeaexport.csv`, and have this repository cloned to
 `~/nordeagnucash` and have made directories `~/nordeagnucash/nordeaexport`,
-`~/nordeagnucash/portfolios`, `~/nordeagnucash/prices`, then all you need to do
-is to run:
+`~/nordeagnucash/portfolios`, `~/nordeagnucash/prices`,
+`~/nordeagnucash/currencies` then all you need to do is to run:
 ```
 ~/nordeagnucash/get.sh
 ```
