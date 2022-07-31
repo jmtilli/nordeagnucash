@@ -27,7 +27,7 @@ Create a file `~/.local/bin/gnucash` with contents:
 ```
 #!/bin/sh
 export FQ_LOAD_QUOTELET=NordeaGnuCash
-export PERL5LIB=$HOME/nordeagnucash
+export PERL5LIB=$HOME/nordeagnucash/perl
 echo "Set custom Finance::Quote module list"
 /usr/bin/gnucash
 ```
