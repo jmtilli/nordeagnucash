@@ -42,11 +42,15 @@ if [ -e "$TGT" ]; then
 		echo "Copying, different"
 		cat "$SRC"|sed '1s/^\xEF\xBB\xBF//' > "$TGT"
 		python2 "$HOME/nordeagnucash/process.py" "${YYYY}${MM}${DD}"
+		echo "Enter these into GnuCash manually:"
+		cat "$HOME/nordeagnucash/currencies/${YYYY}${MM}${DD}.txt"
 	fi
 else
 	echo "Copying, nonexistent"
 	cat "$SRC"|sed '1s/^\xEF\xBB\xBF//' > "$TGT"
 	python2 "$HOME/nordeagnucash/process.py" "${YYYY}${MM}${DD}"
+	echo "Enter these into GnuCash manually:"
+	cat "$HOME/nordeagnucash/currencies/${YYYY}${MM}${DD}.txt"
 fi
 echo OK
 exit 0
