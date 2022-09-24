@@ -29,9 +29,16 @@ with open(fnsrc, "r") as f:
     rows = []
     for row in csv_reader:
         rows.append(row)
-    if rows[1] == ['Type', 'AccountKey', 'Display Name', 'POA', 'FREE/PENSION', 'MARKETVALUE', 'UNREALIZEDPROFITLOSS', 'ISIN', 'MIC', 'CURRENCY', 'NAME', 'AMOUNT', 'PRICE', 'PRICETIME', 'CHANGE', 'CHANGEPCT', 'PRICEFACTOR', 'FX', 'A.PRICE', 'VALUE', 'VALUE_BASE', 'BASECURRENCY', 'MARKETVALUE_DEVELOPMENT', 'MARKETVALUE_DEVELOPMENT_TODAY', 'INCOMPLETE_DATA', 'INCOMPLETE_DATA_MARKETVALUE', 'INCOMPLETE_DATA_PROFITLOSS']:
+    if rows[1][:18] == ['Type', 'AccountKey', 'Display Name', 'POA', 'FREE/PENSION', 'MARKETVALUE', 'UNREALIZEDPROFITLOSS', 'ISIN', 'MIC', 'CURRENCY', 'NAME', 'AMOUNT', 'PRICE', 'PRICETIME', 'CHANGE', 'CHANGEPCT', 'PRICEFACTOR', 'FX']:
         version = 1
     else:
+        print "---"
+        for col in ['Type', 'AccountKey', 'Display Name', 'POA', 'FREE/PENSION', 'MARKETVALUE', 'UNREALIZEDPROFITLOSS', 'ISIN', 'MIC', 'CURRENCY', 'NAME', 'AMOUNT', 'PRICE', 'PRICETIME', 'CHANGE', 'CHANGEPCT', 'PRICEFACTOR', 'FX', '...']:
+            print col
+        print "---"
+        for col in rows[1]:
+            print col
+        print "---"
         print "Unsupported version"
         assert False
     if version == 1:
