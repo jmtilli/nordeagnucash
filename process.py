@@ -29,18 +29,26 @@ with open(fnsrc, "r") as f:
     rows = []
     for row in csv_reader:
         rows.append(row)
-    if rows[1][:18] == ['Type', 'AccountKey', 'Display Name', 'POA', 'FREE/PENSION', 'MARKETVALUE', 'UNREALIZEDPROFITLOSS', 'ISIN', 'MIC', 'CURRENCY', 'NAME', 'AMOUNT', 'PRICE', 'PRICETIME', 'CHANGE', 'CHANGEPCT', 'PRICEFACTOR', 'FX']:
-        version = 1
-    else:
-        print "---"
-        for col in ['Type', 'AccountKey', 'Display Name', 'POA', 'FREE/PENSION', 'MARKETVALUE', 'UNREALIZEDPROFITLOSS', 'ISIN', 'MIC', 'CURRENCY', 'NAME', 'AMOUNT', 'PRICE', 'PRICETIME', 'CHANGE', 'CHANGEPCT', 'PRICEFACTOR', 'FX', '...']:
-            print col
-        print "---"
-        for col in rows[1]:
-            print col
-        print "---"
-        print "Unsupported version"
-        assert False
+    mapping={}
+    for idx in range(len(rows[1])):
+        mapping[rows[1][idx]] = idx
+    version = 1
+    for required in ['Type','ISIN','MIC','CURRENCY','NAME','AMOUNT','PRICE','FX']:
+        if required not in mapping:
+            print "Field %s not found" % (required,)
+            assert False
+    #if rows[1][:18] == ['Type', 'AccountKey', 'Display Name', 'POA', 'FREE/PENSION', 'MARKETVALUE', 'UNREALIZEDPROFITLOSS', 'ISIN', 'MIC', 'CURRENCY', 'NAME', 'AMOUNT', 'PRICE', 'PRICETIME', 'CHANGE', 'CHANGEPCT', 'PRICEFACTOR', 'FX']:
+    #    version = 1
+    #else:
+    #    print "---"
+    #    for col in ['Type', 'AccountKey', 'Display Name', 'POA', 'FREE/PENSION', 'MARKETVALUE', 'UNREALIZEDPROFITLOSS', 'ISIN', 'MIC', 'CURRENCY', 'NAME', 'AMOUNT', 'PRICE', 'PRICETIME', 'CHANGE', 'CHANGEPCT', 'PRICEFACTOR', 'FX', '...']:
+    #        print col
+    #    print "---"
+    #    for col in rows[1]:
+    #        print col
+    #    print "---"
+    #    print "Unsupported version"
+    #    assert False
     if version == 1:
         reached_end = False
         for row in rows[2:]:
@@ -50,17 +58,17 @@ with open(fnsrc, "r") as f:
             if reached_end:
                 print "Invalid CSV"
                 assert False
-            if row[0] == "CashAccount":
+            if row[mapping['Type']] == "CashAccount":
                 continue
-            elif row[0] != "Custody":
+            elif row[mapping['Type']] != "Custody":
                 assert False
-            security=row[7]
-            market=row[8]
-            currency=row[9]
-            name=row[10]
-            cnt=int(row[11])
-            price=Decimal(row[12].replace(',', '.'))
-            currencyrate=Decimal(row[17].replace(',', '.'))
+            security=row[mapping['ISIN']]
+            market=row[mapping['MIC']]
+            currency=row[mapping['CURRENCY']]
+            name=row[mapping['NAME']]
+            cnt=int(row[mapping['AMOUNT']])
+            price=Decimal(row[mapping['PRICE']].replace(',', '.'))
+            currencyrate=Decimal(row[mapping['FX']].replace(',', '.'))
             if market == 'XHEL':
                 assert currency == 'EUR'
             elif market == 'XNYS':
@@ -89,6 +97,9 @@ with open(fnsrc, "r") as f:
                 assert currency == 'SEK'
             elif market == 'FSME':
                 assert currency == 'EUR'
+            elif market == 'XXXX':
+                print "Warning, unsupported XXXX market"
+                continue
             else:
                 print "Unsupported market: " + market
                 assert False
