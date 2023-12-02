@@ -1,4 +1,6 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
+from __future__ import print_function
+from __future__ import division
 import os
 import sys
 import re
@@ -35,19 +37,19 @@ with open(fnsrc, "r") as f:
     version = 1
     for required in ['Type','ISIN','MIC','CURRENCY','NAME','AMOUNT','PRICE','FX']:
         if required not in mapping:
-            print "Field %s not found" % (required,)
+            print("Field %s not found" % (required,))
             assert False
     #if rows[1][:18] == ['Type', 'AccountKey', 'Display Name', 'POA', 'FREE/PENSION', 'MARKETVALUE', 'UNREALIZEDPROFITLOSS', 'ISIN', 'MIC', 'CURRENCY', 'NAME', 'AMOUNT', 'PRICE', 'PRICETIME', 'CHANGE', 'CHANGEPCT', 'PRICEFACTOR', 'FX']:
     #    version = 1
     #else:
-    #    print "---"
+    #    print("---")
     #    for col in ['Type', 'AccountKey', 'Display Name', 'POA', 'FREE/PENSION', 'MARKETVALUE', 'UNREALIZEDPROFITLOSS', 'ISIN', 'MIC', 'CURRENCY', 'NAME', 'AMOUNT', 'PRICE', 'PRICETIME', 'CHANGE', 'CHANGEPCT', 'PRICEFACTOR', 'FX', '...']:
-    #        print col
-    #    print "---"
+    #        print(col)
+    #    print("---")
     #    for col in rows[1]:
-    #        print col
-    #    print "---"
-    #    print "Unsupported version"
+    #        print(col)
+    #    print("---")
+    #    print("Unsupported version")
     #    assert False
     if version == 1:
         reached_end = False
@@ -56,7 +58,7 @@ with open(fnsrc, "r") as f:
                 reached_end = True
                 continue
             if reached_end:
-                print "Invalid CSV"
+                print("Invalid CSV")
                 assert False
             if row[mapping['Type']] == "CashAccount":
                 continue
@@ -98,10 +100,10 @@ with open(fnsrc, "r") as f:
             elif market == 'FSME':
                 assert currency == 'EUR'
             elif market == 'XXXX':
-                print "Warning, unsupported XXXX market"
+                print("Warning, unsupported XXXX market")
                 continue
             else:
-                print "Unsupported market: " + market
+                print("Unsupported market: " + market)
                 assert False
             if currency == 'GBX':
                 currency = 'GBP'
